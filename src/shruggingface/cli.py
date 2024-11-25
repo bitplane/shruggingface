@@ -1,0 +1,95 @@
+import os
+import click
+
+
+from . import env
+from . import pack
+
+@click.group()
+def cli():
+    """
+    ¯\\_(ツ)_/¯
+    
+    1. Create an environment and set it up:
+
+        $(shruggingface init)
+
+    2. Run your code to download models.
+
+    3. Export and publish them:
+
+        shruggingface publish
+
+    4. Paste the code from the previous step into your program.
+
+    5. There is no step 5.
+    """
+    pass
+
+@cli.command()
+def info():
+    """Print details about current environment"""
+ 
+    click.echo(f"HF_HOME: {env.get()}")
+    click.echo(f"Exists: {env.exists()}")
+
+
+@cli.command()
+@click.argument("output_file", type=click.Path())
+def save(output_file):
+    """
+    Export the cache directory as a tar.gz file.
+    """
+    
+    if not env.exists():
+        click.echo(f"HF_HOME isn't set up properly.", err=True)
+        raise click.Abort()
+
+    try:
+        pack.pack(output_file)
+    except Exception as e:
+        click.echo(f"Error during export: {e}", err=True)
+        raise click.Abort()
+
+@cli.command()
+@click.argument("input_file", type=click.Path())
+def load(input_file):
+    """
+    Load the given tar.gz file into the cache.
+    """
+    if not env.exists():
+        click.echo(f"HF_HOME isn't set up properly.", err=True)
+        raise click.Abort()
+
+    try:
+        pack.unpack(input_file)
+    except Exception as e:
+        click.echo(f"Error during import: {e}", err=True)
+        raise click.Abort()
+
+
+@cli.command()
+@click.option("--cache_dir", default="./.cache/huggingface", type=click.Path(file_okay=False))
+def init(cache_dir):
+    """
+    Creates the cache
+    """
+    cache_dir = os.path.abspath(os.path.expanduser(cache_dir))
+
+    env.set(cache_dir)
+    env.create()
+
+    click.echo(f'export HF_HOME={cache_dir}')
+
+
+@cli.command()
+def publish():
+    """
+    Publish the current cache to Internet Archive
+    """
+    raise NotImplementedError()
+
+
+if __name__ == "__main__":
+    cli()
+
