@@ -1,9 +1,10 @@
 import os
 import click
 
-
 from . import env
 from . import pack
+from . import push
+
 
 @click.group()
 def cli():
@@ -28,10 +29,16 @@ def cli():
 
 @cli.command()
 def info():
-    """Print details about current environment"""
- 
-    click.echo(f"HF_HOME: {env.get()}")
-    click.echo(f"Exists: {env.exists()}")
+    """Print some details"""
+
+    click.echo(f"Project name: {env.name()}")
+
+    env_exists = env.exists()
+    exists = "exists" if env_exists else "missing"
+    click.echo(f"HF_HOME: {env.get()} ({exists})")
+
+    if env_exists:
+        click.echo(f"Size: {pack.get_size()}")
 
 
 @cli.command()
@@ -69,7 +76,7 @@ def load(input_file):
 
 
 @cli.command()
-@click.option("--cache_dir", default="./.cache/huggingface", type=click.Path(file_okay=False))
+@click.option("--cache_dir", default=f"~/.cache/shruggingface/{env.name()}", type=click.Path(file_okay=False))
 def init(cache_dir):
     """
     Creates the cache
@@ -83,12 +90,17 @@ def init(cache_dir):
 
 
 @cli.command()
+@click.option("--name", prompt="Project name", default=env.name())
 def publish():
     """
     Publish the current cache to Internet Archive
     """
-    raise NotImplementedError()
+    if not env.exists():
+        click.echo(f"HF_HOME isn't set up properly.", err=True)
+        raise click.Abort()
 
+    
+    
 
 if __name__ == "__main__":
     cli()
