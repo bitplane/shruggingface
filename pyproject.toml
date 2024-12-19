@@ -4,7 +4,7 @@ version = "0.1.1"
 description = "back up and restore huggingface models"
 authors = ["Gareth Davidson <gaz@bitplane.net>"]
 license = "Public Domain" # WTFPL but pypi don't like it
-readme = "README.md"
+readme = "README"
 packages = [{ include = "shruggingface", from ="src" }]
 
 
