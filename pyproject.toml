@@ -1,11 +1,17 @@
 [tool.poetry]
 name = "shruggingface"
-version = "0.1.0"
+version = "0.1.1"
 description = "back up and restore huggingface models"
 authors = ["Gareth Davidson <gaz@bitplane.net>"]
 license = "Public Domain" # WTFPL but pypi don't like it
 readme = "README.md"
 packages = [{ include = "shruggingface", from ="src" }]
+
+
+[tool.poetry.urls]
+Homepage = "https://bitplane.net/dev/python/shruggingface"
+Repository = "https://github.com/bitplane/shruggingface"
+Bug Tracker = "https://github.com/bitplane/shruggingface/issues"
 
 [tool.poetry.dependencies]
 python = "^3.9"
@@ -17,6 +23,7 @@ black = "^23.0"
 flake8 = "^6.0"
 pytest = "^7.0"
 build = "^1.2"
+twine = "^6.0"
 
 [tool.poetry.scripts]
 shruggingface = "shruggingface.cli:cli"
